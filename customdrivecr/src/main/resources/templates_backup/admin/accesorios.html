@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Accesorios | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Gestión de Accesorios</h1>
+                <p class="text-gray-600">Registro, edición y eliminación de accesorios automotrices.</p>
+            </div>
+
+            <a href="/admin/dashboard" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Volver al dashboard
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Formulario -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-1">
+
+                <h2 class="text-xl font-bold mb-4" th:text="${accesorio.id == null ? 'Nuevo accesorio' : 'Editar accesorio'}">
+                    Nuevo accesorio
+                </h2>
+
+                <form th:action="@{/admin/accesorios/guardar}" th:object="${accesorio}" method="post" class="space-y-4">
+
+                    <input type="hidden" th:field="*{id}">
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Nombre</label>
+                        <input type="text" th:field="*{nombre}" required
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="Ej: Luces LED H11">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Categoría</label>
+                        <input type="text" th:field="*{categoria}" required
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="Ej: Iluminación">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Descripción</label>
+                        <textarea th:field="*{descripcion}"
+                                  class="w-full border rounded px-3 py-2"
+                                  rows="3"
+                                  placeholder="Descripción del accesorio"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Precio</label>
+                        <input type="number" th:field="*{precio}" required step="0.01"
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="10900">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Stock</label>
+                        <input type="number" th:field="*{stock}" required
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="10">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">URL de imagen</label>
+                        <input type="text" th:field="*{imagenUrl}"
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="https://imagen.com/producto.jpg">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" th:field="*{activo}">
+                        <label class="text-sm">Activo</label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded">
+                        Guardar accesorio
+                    </button>
+
+                    <a href="/admin/accesorios" class="block text-center text-sm text-gray-600 hover:text-blue-700">
+                        Limpiar formulario
+                    </a>
+                </form>
+            </div>
+
+            <!-- Tabla -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+
+                <h2 class="text-xl font-bold mb-4">Lista de accesorios</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="p-3">ID</th>
+                                <th class="p-3">Nombre</th>
+                                <th class="p-3">Categoría</th>
+                                <th class="p-3">Precio</th>
+                                <th class="p-3">Stock</th>
+                                <th class="p-3">Activo</th>
+                                <th class="p-3">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="item : ${accesorios}" class="border-b hover:bg-gray-50">
+                                <td class="p-3" th:text="${item.id}">1</td>
+                                <td class="p-3" th:text="${item.nombre}">Luces LED</td>
+                                <td class="p-3" th:text="${item.categoria}">Iluminación</td>
+                                <td class="p-3">
+                                    ₡<span th:text="${item.precio}">10900</span>
+                                </td>
+                                <td class="p-3" th:text="${item.stock}">5</td>
+                                <td class="p-3">
+                                    <span th:if="${item.activo}" class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                                        Sí
+                                    </span>
+                                    <span th:if="${!item.activo}" class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
+                                        No
+                                    </span>
+                                </td>
+                                <td class="p-3 flex gap-2">
+                                    <a th:href="@{/admin/accesorios/editar/{id}(id=${item.id})}"
+                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                                        Editar
+                                    </a>
+
+                                    <a th:href="@{/admin/accesorios/eliminar/{id}(id=${item.id})}"
+                                       onclick="return confirm('¿Seguro que desea eliminar este accesorio?')"
+                                       class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(accesorios)}">
+                                <td colspan="7" class="p-6 text-center text-gray-500">
+                                    No hay accesorios registrados todavía.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito | CustomDrive CR</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 min-h-screen text-slate-900">
+
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+
+            <a href="/" class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-blue-700 text-white rounded-2xl flex items-center justify-center font-bold text-2xl">
+                    C
+                </div>
+
+                <div>
+                    <h1 class="title-font text-2xl font-bold">CustomDrive CR</h1>
+                    <p class="text-xs uppercase tracking-[0.25em] text-blue-700">
+                        Shopping Cart
+                    </p>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="/seleccion-vehiculo"
+                    class="hidden sm:inline-block px-5 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold">
+                    Seguir comprando
+                </a>
+
+                <a href="/logout"
+                    class="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold">
+                    Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+
+        <!-- VEHÍCULO SELECCIONADO -->
+        <section th:if="${vehiculoSeleccionado != null}"
+            class="mb-8 bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+
+            <div class="flex flex-col md:flex-row md:items-center gap-5">
+
+                <div class="w-full md:w-40 h-32 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
+
+                    <img th:if="${vehiculoSeleccionado.imagenUrl != null && !vehiculoSeleccionado.imagenUrl.isEmpty()}"
+                        th:src="${vehiculoSeleccionado.imagenUrl}" class="w-full h-full object-cover"
+                        alt="Vehículo seleccionado">
+
+                    <div th:if="${vehiculoSeleccionado.imagenUrl == null || vehiculoSeleccionado.imagenUrl.isEmpty()}"
+                        class="w-full h-full flex items-center justify-center bg-slate-200">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold text-xl">
+                            C
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1">
+                    <p class="text-xs uppercase tracking-[0.25em] text-blue-700 font-bold">
+                        Vehículo seleccionado
+                    </p>
+
+                    <h2 class="title-font text-3xl font-bold mt-2">
+                        <span th:text="${vehiculoSeleccionado.modelo.marca.nombre}">BMW</span>
+                        <span th:text="${vehiculoSeleccionado.modelo.nombre}">i8 Coupé</span>
+                        <span th:text="${vehiculoSeleccionado.anio}">2024</span>
+                    </h2>
+
+                    <p class="text-slate-500 mt-2">
+                        Versión:
+                        <strong
+                            th:text="${vehiculoSeleccionado.version != null && !vehiculoSeleccionado.version.isEmpty() ? vehiculoSeleccionado.version : 'Estándar'}">
+                            Coupé
+                        </strong>
+                    </p>
+                </div>
+
+                <a href="/seleccion-vehiculo"
+                    class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-2xl font-semibold text-center">
+                    Cambiar vehículo
+                </a>
+            </div>
+        </section>
+
+        <!-- MENSAJE SIN STOCK -->
+        <div th:if="${param.sinStock}"
+            class="mb-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl font-semibold">
+            No se puede agregar o aumentar este producto porque no tiene stock disponible.
+        </div>
+
+        <!-- ENCABEZADO -->
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 mb-8">
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+
+                <div class="lg:col-span-2">
+                    <p class="text-sm uppercase tracking-[0.25em] text-blue-700 font-bold">
+                        Resumen de compra
+                    </p>
+
+                    <h1 class="title-font text-4xl md:text-5xl font-bold mt-3 leading-tight">
+                        Carrito de compras
+                    </h1>
+
+                    <p class="text-slate-500 mt-5 text-lg">
+                        Revise los productos seleccionados antes de confirmar el pedido.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 rounded-3xl p-6">
+                    <p class="text-sm text-blue-700 font-bold">Productos en carrito</p>
+
+                    <p class="title-font text-5xl font-bold mt-2"
+                        th:text="${carrito != null ? #lists.size(carrito) : 0}">
+                        0
+                    </p>
+
+                    <p class="text-slate-500 mt-2">
+                        Producto(s) agregados.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARRITO VACÍO -->
+        <section th:if="${carrito == null || #lists.isEmpty(carrito)}"
+            class="bg-white rounded-3xl shadow-sm border border-slate-200 p-10 text-center">
+
+            <div
+                class="w-24 h-24 mx-auto rounded-3xl bg-slate-100 flex items-center justify-center text-4xl font-bold text-slate-400">
+                C
+            </div>
+
+            <h2 class="title-font text-3xl font-bold mt-6">
+                El carrito está vacío
+            </h2>
+
+            <p class="text-slate-500 mt-3">
+                Seleccioná un vehículo y agregá accesorios compatibles al carrito.
+            </p>
+
+            <a href="/seleccion-vehiculo"
+                class="inline-block mt-6 bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold">
+                Seleccionar vehículo
+            </a>
+        </section>
+
+        <!-- CARRITO CON PRODUCTOS -->
+        <section th:if="${carrito != null && !#lists.isEmpty(carrito)}"
+            class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+            <!-- LISTA DE PRODUCTOS -->
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+
+                <div class="p-6 border-b border-slate-200">
+                    <h2 class="title-font text-3xl font-bold">
+                        Productos seleccionados
+                    </h2>
+
+                    <p class="text-slate-500 mt-1">
+                        Podés aumentar, disminuir o eliminar productos del carrito.
+                    </p>
+                </div>
+
+                <div class="divide-y divide-slate-200">
+
+                    <article th:each="item : ${carrito}" class="p-6 flex flex-col md:flex-row gap-5">
+
+                        <!-- IMAGEN -->
+                        <div class="w-full md:w-36 h-36 bg-slate-100 rounded-2xl overflow-hidden shrink-0">
+
+                            <img th:if="${item.accesorio.imagenUrl != null && !item.accesorio.imagenUrl.isEmpty()}"
+                                th:src="${item.accesorio.imagenUrl}" class="w-full h-full object-cover"
+                                alt="Imagen del accesorio">
+
+                            <div th:if="${item.accesorio.imagenUrl == null || item.accesorio.imagenUrl.isEmpty()}"
+                                class="w-full h-full flex items-center justify-center bg-slate-200">
+                                <div
+                                    class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold text-xl">
+                                    C
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INFO -->
+                        <div class="flex-1">
+
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+
+                                <div>
+                                    <p class="text-xs uppercase tracking-[0.2em] text-blue-700 font-bold"
+                                        th:text="${item.accesorio.categoria}">
+                                        Categoría
+                                    </p>
+
+                                    <h3 class="title-font text-2xl font-bold mt-1" th:text="${item.accesorio.nombre}">
+                                        Producto
+                                    </h3>
+
+                                    <p class="text-slate-500 text-sm mt-2 line-clamp-2"
+                                        th:text="${item.accesorio.descripcion}">
+                                        Descripción
+                                    </p>
+                                </div>
+
+                                <div class="text-left md:text-right">
+                                    <p class="text-sm text-slate-500">Precio unitario</p>
+
+                                    <p class="text-2xl font-bold">
+                                        ₡<span
+                                            th:text="${item.accesorio.precio != null ? #numbers.formatDecimal(item.accesorio.precio, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                                <!-- CANTIDAD -->
+                                <div class="flex flex-wrap items-center gap-3">
+
+                                    <a th:href="@{/carrito/disminuir/{id}(id=${item.accesorio.id})}"
+                                        class="w-10 h-10 rounded-xl bg-slate-200 hover:bg-slate-300 flex items-center justify-center font-bold">
+                                        -
+                                    </a>
+
+                                    <div class="px-5 py-2 rounded-xl bg-slate-100 font-bold">
+                                        <span th:text="${item.cantidad}">1</span>
+                                    </div>
+
+                                    <a th:if="${item.accesorio.stock > 0 && item.cantidad < item.accesorio.stock}"
+                                        th:href="@{/carrito/aumentar/{id}(id=${item.accesorio.id})}"
+                                        class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center font-bold">
+                                        +
+                                    </a>
+
+                                    <span th:if="${item.accesorio.stock <= 0 || item.cantidad >= item.accesorio.stock}"
+                                        class="w-10 h-10 rounded-xl bg-slate-300 text-slate-500 flex items-center justify-center font-bold cursor-not-allowed">
+                                        +
+                                    </span>
+
+                                    <span class="text-sm text-slate-500">
+                                        Stock:
+                                        <span th:text="${item.accesorio.stock}">0</span>
+                                    </span>
+
+                                    <span th:if="${item.accesorio.stock <= 0}" class="text-sm font-bold text-red-600">
+                                        Producto sin stock. Elimínelo del carrito.
+                                    </span>
+
+                                    <span th:if="${item.accesorio.stock > 0 && item.cantidad > item.accesorio.stock}"
+                                        class="text-sm font-bold text-red-600">
+                                        Cantidad supera el stock disponible.
+                                    </span>
+                                </div>
+
+                                <!-- SUBTOTAL Y ELIMINAR -->
+                                <div class="flex items-center gap-4">
+
+                                    <div class="text-right">
+                                        <p class="text-sm text-slate-500">Subtotal</p>
+
+                                        <p class="text-2xl font-bold">
+                                            ₡<span
+                                                th:text="${item.subtotal != null ? #numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+                                        </p>
+                                    </div>
+
+                                    <a th:href="@{/carrito/eliminar/{id}(id=${item.accesorio.id})}"
+                                        onclick="return confirm('¿Desea eliminar este producto del carrito?')"
+                                        class="px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold">
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+            <!-- RESUMEN -->
+            <aside class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sticky top-6">
+
+                <h2 class="title-font text-3xl font-bold">
+                    Resumen
+                </h2>
+
+                <p class="text-slate-500 mt-2">
+                    Total estimado del pedido.
+                </p>
+
+                <div class="mt-6 space-y-4">
+
+                    <div class="flex justify-between text-slate-600">
+                        <span>Productos</span>
+                        <span th:text="${carrito != null ? #lists.size(carrito) : 0}">0</span>
+                    </div>
+
+                    <div class="flex justify-between text-slate-600">
+                        <span>Estado</span>
+
+                        <span th:if="${carritoValido}" class="font-semibold text-green-700">
+                            Listo para confirmar
+                        </span>
+
+                        <span th:if="${!carritoValido}" class="font-semibold text-red-700">
+                            Requiere revisión
+                        </span>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4 flex justify-between items-end">
+                        <span class="text-lg font-bold">Total</span>
+
+                        <span class="text-4xl font-bold text-blue-700">
+                            ₡<span
+                                th:text="${total != null ? #numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mt-8 space-y-3">
+
+                    <a th:if="${carritoValido}" href="/pedidos/confirmar"
+                        class="block text-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-700/20">
+                        Confirmar pedido
+                    </a>
+
+                    <span th:if="${!carritoValido}"
+                        class="block text-center bg-slate-300 text-slate-500 font-bold py-4 rounded-2xl cursor-not-allowed">
+                        Corrija el carrito para continuar
+                    </span>
+
+                    <a href="/seleccion-vehiculo"
+                        class="block text-center border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold py-4 rounded-2xl">
+                        Seguir comprando
+                    </a>
+
+                    <a href="/mis-pedidos"
+                        class="hidden sm:inline-block px-5 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold">
+                        Mis pedidos
+                    </a>
+
+                    <a href="/carrito/vaciar" onclick="return confirm('¿Desea vaciar todo el carrito?')"
+                        class="block text-center bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-2xl">
+                        Vaciar carrito
+                    </a>
+                </div>
+
+                <p class="text-xs text-slate-400 mt-5">
+                    El pedido se confirmará según la disponibilidad actual del inventario.
+                </p>
+            </aside>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

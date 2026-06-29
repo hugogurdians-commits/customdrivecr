@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo Compatible | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Catálogo de Accesorios Compatibles</h1>
+
+                <p th:if="${vehiculo != null}" class="text-gray-600 mt-2">
+                    Vehículo seleccionado:
+                    <strong>
+                        <span th:text="${vehiculo.modelo.marca.nombre}">BMW</span>
+                        <span th:text="${vehiculo.modelo.nombre}">i8 Coupé</span>
+                        <span th:text="${vehiculo.anio}">2024</span>
+                        <span th:text="${vehiculo.version}">Coupé</span>
+                    </strong>
+                </p>
+
+                <p th:if="${vehiculo == null}" class="text-gray-600 mt-2">
+                    Seleccioná un vehículo para visualizar accesorios compatibles.
+                </p>
+            </div>
+
+            <a href="/seleccion-vehiculo" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Cambiar vehículo
+            </a>
+        </div>
+
+        <div th:if="${mensaje}" class="mb-6 bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded">
+            <span th:text="${mensaje}">Mensaje del sistema</span>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(compatibilidades)}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <div th:each="item : ${compatibilidades}" class="bg-white rounded-xl shadow overflow-hidden">
+
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <img th:if="${item.accesorio.imagenUrl != null && !item.accesorio.imagenUrl.isEmpty()}"
+                        th:src="${item.accesorio.imagenUrl}" class="w-full h-full object-cover"
+                        alt="Imagen del accesorio">
+
+                    <span th:if="${item.accesorio.imagenUrl == null || item.accesorio.imagenUrl.isEmpty()}"
+                        class="text-gray-500">
+                        Sin imagen
+                    </span>
+                </div>
+
+                <div class="p-5">
+                    <p class="text-sm text-blue-700 font-semibold" th:text="${item.accesorio.categoria}">
+                        Iluminación
+                    </p>
+
+                    <h2 class="text-xl font-bold mt-1" th:text="${item.accesorio.nombre}">
+                        Luces LED H11
+                    </h2>
+
+                    <p class="text-gray-600 mt-2" th:text="${item.accesorio.descripcion}">
+                        Descripción del producto.
+                    </p>
+
+                    <p class="mt-4 text-2xl font-bold text-gray-900">
+                        ₡<span th:text="${item.accesorio.precio}">10900</span>
+                    </p>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Stock:
+                        <span th:text="${item.accesorio.stock}">8</span>
+                    </p>
+
+                    <p class="text-sm text-gray-500 mt-2">
+                        Nota:
+                        <span th:text="${item.notas}">Compatible.</span>
+                    </p>
+
+                    <div class="mt-5 flex gap-3">
+                        <a th:href="@{/detalle-producto(id=${item.accesorio.id})}"
+                            class="flex-1 text-center bg-gray-800 hover:bg-gray-900 text-white py-2 rounded">
+                            Ver detalle
+                        </a>
+
+                        <a th:href="@{/carrito/agregar/{id}(id=${item.accesorio.id})}"
+                            class="flex-1 text-center bg-blue-700 hover:bg-blue-800 text-white py-2 rounded">
+                            Agregar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(compatibilidades)}" class="bg-white rounded-xl shadow p-8 text-center">
+            <p class="text-gray-500">No hay accesorios para mostrar.</p>
+            <a href="/seleccion-vehiculo" class="inline-block mt-4 text-blue-700 hover:underline">
+                Seleccionar otro vehículo
+            </a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprobante | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-4xl mx-auto px-6 py-10">
+
+        <div class="bg-white rounded-xl shadow p-8">
+
+            <div class="flex justify-between items-start border-b pb-6 mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold">CustomDrive CR</h1>
+                    <p class="text-gray-500">Comprobante interno de pedido</p>
+                </div>
+
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Pedido No.</p>
+                    <p class="text-2xl font-bold">#<span th:text="${pedido.id}">1</span></p>
+                    <p class="text-sm text-gray-500" th:text="${pedido.fechaPedido}">Fecha</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <h2 class="font-bold mb-2">Cliente</h2>
+                    <p th:text="${pedido.nombreCliente}">Nombre</p>
+                    <p th:text="${pedido.correoCliente}">Correo</p>
+                    <p th:text="${pedido.telefonoCliente}">Teléfono</p>
+                </div>
+
+                <div>
+                    <h2 class="font-bold mb-2">Estado del pedido</h2>
+                    <span class="inline-block px-3 py-1 rounded bg-yellow-100 text-yellow-700"
+                          th:text="${pedido.estado}">
+                        PENDIENTE
+                    </span>
+                </div>
+            </div>
+
+            <table class="w-full border-collapse mb-8">
+                <thead>
+                    <tr class="bg-gray-200 text-left">
+                        <th class="p-3">Producto</th>
+                        <th class="p-3">Cantidad</th>
+                        <th class="p-3">Precio</th>
+                        <th class="p-3">Subtotal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="detalle : ${detalles}" class="border-b">
+                        <td class="p-3" th:text="${detalle.accesorio.nombre}">Producto</td>
+                        <td class="p-3" th:text="${detalle.cantidad}">1</td>
+                        <td class="p-3">₡<span th:text="${detalle.precioUnitario}">0</span></td>
+                        <td class="p-3 font-bold">₡<span th:text="${detalle.subtotal}">0</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-right text-3xl font-bold mb-8">
+                Total: ₡<span th:text="${pedido.total}">0</span>
+            </div>
+
+            <div class="bg-gray-100 rounded p-4 text-sm text-gray-600">
+                Este comprobante es generado por el sistema CustomDrive CR para fines académicos y de control interno.
+            </div>
+
+            <div class="mt-8 flex gap-4">
+                <a href="/seleccion-vehiculo"
+                   class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded">
+                    Nueva compra
+                </a>
+
+                <a href="/"
+                   class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded">
+                    Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

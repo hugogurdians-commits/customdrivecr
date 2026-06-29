@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- ENCABEZADO -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Panel Administrativo</h1>
+                <p class="text-gray-600 mt-2">
+                    Resumen general del sistema CustomDrive CR.
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="/" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded">
+                    Inicio
+                </a>
+
+                <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                    Cerrar sesión
+                </a>
+            </div>
+        </div>
+
+        <!-- TARJETAS DE ESTADÍSTICAS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Marcas registradas</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalMarcas}">0</h2>
+                <a href="/admin/marcas" class="inline-block mt-4 text-blue-700 hover:underline">
+                    Gestionar marcas
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Modelos registrados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalModelos}">0</h2>
+                <a href="/admin/modelos" class="inline-block mt-4 text-blue-700 hover:underline">
+                    Gestionar modelos
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Vehículos registrados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalVehiculos}">0</h2>
+                <a href="/admin/vehiculos" class="inline-block mt-4 text-blue-700 hover:underline">
+                    Gestionar vehículos
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Accesorios registrados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalAccesorios}">0</h2>
+                <a href="/admin/accesorios" class="inline-block mt-4 text-blue-700 hover:underline">
+                    Gestionar accesorios
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Compatibilidades registradas</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalCompatibilidades}">0</h2>
+                <a href="/admin/compatibilidades" class="inline-block mt-4 text-blue-700 hover:underline">
+                    Gestionar compatibilidades
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Usuarios registrados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalUsuarios}">0</h2>
+                <a href="/admin/usuarios" class="inline-block mt-4 text-blue-700 hover:underline">
+                    Gestionar usuarios
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ACCESOS RÁPIDOS -->
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <h2 class="text-2xl font-bold mb-4">Accesos rápidos</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                <a href="/admin/marcas"
+                   class="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <h3 class="font-bold">Marcas</h3>
+                    <p class="text-sm text-gray-500">Registrar marcas como Toyota, BMW, Hyundai.</p>
+                </a>
+
+                <a href="/admin/modelos"
+                   class="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <h3 class="font-bold">Modelos</h3>
+                    <p class="text-sm text-gray-500">Asociar modelos a sus respectivas marcas.</p>
+                </a>
+
+                <a href="/admin/vehiculos"
+                   class="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <h3 class="font-bold">Vehículos</h3>
+                    <p class="text-sm text-gray-500">Registrar vehículos por modelo, año y versión.</p>
+                </a>
+
+                <a href="/admin/accesorios"
+                   class="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <h3 class="font-bold">Accesorios</h3>
+                    <p class="text-sm text-gray-500">Administrar productos, precios, stock e imágenes.</p>
+                </a>
+
+                <a href="/admin/compatibilidades"
+                   class="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <h3 class="font-bold">Compatibilidades</h3>
+                    <p class="text-sm text-gray-500">Relacionar accesorios con vehículos compatibles.</p>
+                </a>
+
+                <a href="/seleccion-vehiculo"
+                   class="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <h3 class="font-bold">Vista cliente</h3>
+                    <p class="text-sm text-gray-500">Probar selección de vehículo y catálogo compatible.</p>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

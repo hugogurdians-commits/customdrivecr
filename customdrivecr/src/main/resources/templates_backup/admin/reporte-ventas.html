@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Ventas | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Reporte de Ventas</h1>
+                <p class="text-gray-600">
+                    Resumen general de pedidos y ventas del sistema.
+                </p>
+            </div>
+
+            <a href="/admin/dashboard" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Volver al dashboard
+            </a>
+        </div>
+
+        <!-- TARJETAS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Total vendido</p>
+                <h2 class="text-4xl font-bold mt-2">
+                    ₡<span th:text="${totalVendido}">0</span>
+                </h2>
+                <p class="text-sm text-gray-500 mt-2">
+                    No incluye pedidos cancelados.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Total de pedidos</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${totalPedidos}">0</h2>
+                <p class="text-sm text-gray-500 mt-2">
+                    Cantidad total de pedidos registrados.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Pedidos pendientes</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${pedidosPendientes}">0</h2>
+                <p class="text-sm text-yellow-700 mt-2">
+                    Pendientes de revisión.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Pedidos confirmados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${pedidosConfirmados}">0</h2>
+                <p class="text-sm text-green-700 mt-2">
+                    Confirmados por administración.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Pedidos entregados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${pedidosEntregados}">0</h2>
+                <p class="text-sm text-blue-700 mt-2">
+                    Compras finalizadas.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <p class="text-gray-500 text-sm">Pedidos cancelados</p>
+                <h2 class="text-4xl font-bold mt-2" th:text="${pedidosCancelados}">0</h2>
+                <p class="text-sm text-red-700 mt-2">
+                    No se suman al total vendido.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <h2 class="text-2xl font-bold mb-4">Detalle de pedidos</h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200 text-left">
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Cliente</th>
+                            <th class="p-3">Correo</th>
+                            <th class="p-3">Teléfono</th>
+                            <th class="p-3">Fecha</th>
+                            <th class="p-3">Estado</th>
+                            <th class="p-3">Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="pedido : ${pedidos}" class="border-b hover:bg-gray-50">
+                            <td class="p-3" th:text="${pedido.id}">1</td>
+
+                            <td class="p-3" th:text="${pedido.nombreCliente}">
+                                Cliente
+                            </td>
+
+                            <td class="p-3" th:text="${pedido.correoCliente}">
+                                correo
+                            </td>
+
+                            <td class="p-3" th:text="${pedido.telefonoCliente}">
+                                teléfono
+                            </td>
+
+                            <td class="p-3" th:text="${pedido.fechaPedido}">
+                                fecha
+                            </td>
+
+                            <td class="p-3">
+                                <span th:if="${pedido.estado == 'PENDIENTE'}"
+                                      class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">
+                                    PENDIENTE
+                                </span>
+
+                                <span th:if="${pedido.estado == 'CONFIRMADO'}"
+                                      class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                                    CONFIRMADO
+                                </span>
+
+                                <span th:if="${pedido.estado == 'ENTREGADO'}"
+                                      class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
+                                    ENTREGADO
+                                </span>
+
+                                <span th:if="${pedido.estado == 'CANCELADO'}"
+                                      class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
+                                    CANCELADO
+                                </span>
+                            </td>
+
+                            <td class="p-3 font-bold">
+                                ₡<span th:text="${pedido.total}">0</span>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(pedidos)}">
+                            <td colspan="7" class="p-6 text-center text-gray-500">
+                                No hay pedidos registrados todavía.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito de Compras | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-6xl mx-auto px-6 py-10">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Carrito de Compras</h1>
+                <p class="text-gray-600 mt-2">Accesorios seleccionados por el cliente.</p>
+            </div>
+
+            <a href="/seleccion-vehiculo" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Seguir comprando
+            </a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(carrito)}" class="bg-white rounded-xl shadow p-8 text-center">
+            <p class="text-gray-500 text-lg">El carrito está vacío.</p>
+
+            <a href="/seleccion-vehiculo"
+                class="inline-block mt-4 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded">
+                Buscar accesorios
+            </a>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(carrito)}" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 bg-white rounded-xl shadow p-6">
+
+                <h2 class="text-xl font-bold mb-4">Productos agregados</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="p-3">Producto</th>
+                                <th class="p-3">Categoría</th>
+                                <th class="p-3">Precio</th>
+                                <th class="p-3">Cantidad</th>
+                                <th class="p-3">Subtotal</th>
+                                <th class="p-3">Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="item : ${carrito}" class="border-b hover:bg-gray-50">
+                                <td class="p-3 font-semibold" th:text="${item.accesorio.nombre}">
+                                    Luces LED H11
+                                </td>
+
+                                <td class="p-3" th:text="${item.accesorio.categoria}">
+                                    Iluminación
+                                </td>
+
+                                <td class="p-3">
+                                    ₡<span th:text="${item.accesorio.precio}">10900</span>
+                                </td>
+
+                                <td class="p-3">
+                                    <div class="flex items-center gap-2">
+                                        <a th:href="@{/carrito/disminuir/{id}(id=${item.accesorio.id})}"
+                                            class="bg-gray-300 hover:bg-gray-400 text-gray-900 px-3 py-1 rounded font-bold">
+                                            -
+                                        </a>
+
+                                        <span class="min-w-[32px] text-center font-bold" th:text="${item.cantidad}">
+                                            1
+                                        </span>
+
+                                        <a th:href="@{/carrito/aumentar/{id}(id=${item.accesorio.id})}"
+                                            class="bg-blue-700 hover:bg-blue-800 text-white px-3 py-1 rounded font-bold">
+                                            +
+                                        </a>
+                                    </div>
+
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Stock disponible:
+                                        <span th:text="${item.accesorio.stock}">8</span>
+                                    </p>
+                                </td>
+
+                                <td class="p-3 font-bold">
+                                    ₡<span th:text="${item.subtotal}">10900</span>
+                                </td>
+
+                                <td class="p-3">
+                                    <a th:href="@{/carrito/eliminar/{id}(id=${item.accesorio.id})}"
+                                        onclick="return confirm('¿Desea eliminar este producto completo del carrito?')"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6">
+                    <a href="/carrito/vaciar" onclick="return confirm('¿Seguro que desea vaciar todo el carrito?')"
+                        class="text-red-600 hover:underline">
+                        Vaciar carrito
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6 h-fit">
+
+                <h2 class="text-xl font-bold mb-4">Resumen</h2>
+
+                <div class="flex justify-between border-b py-3">
+                    <span>Subtotal</span>
+                    <strong>₡<span th:text="${total}">10900</span></strong>
+                </div>
+
+                <div class="flex justify-between border-b py-3">
+                    <span>Envío</span>
+                    <strong>Por coordinar</strong>
+                </div>
+
+                <div class="flex justify-between py-4 text-xl">
+                    <span>Total</span>
+                    <strong>₡<span th:text="${total}">10900</span></strong>
+                </div>
+
+                <a href="/pedidos/confirmar"
+                    class="block text-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded">
+                    Confirmar compra
+                </a>
+
+                <p class="text-sm text-gray-500 mt-4">
+                    Al confirmar la compra, el sistema generará un comprobante interno con el detalle del pedido.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

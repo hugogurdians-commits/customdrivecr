@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis pedidos | CustomDrive CR</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 min-h-screen text-slate-900">
+
+<header class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+
+        <a href="/" class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-blue-700 text-white rounded-2xl flex items-center justify-center font-bold text-2xl">
+                C
+            </div>
+
+            <div>
+                <h1 class="title-font text-2xl font-bold">CustomDrive CR</h1>
+                <p class="text-xs uppercase tracking-[0.25em] text-blue-700">
+                    Order History
+                </p>
+            </div>
+        </a>
+
+        <div class="flex items-center gap-3">
+            <a href="/seleccion-vehiculo"
+               class="hidden sm:inline-block px-5 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold">
+                Buscar accesorios
+            </a>
+
+            <a href="/carrito"
+               class="hidden sm:inline-block px-5 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold">
+                Carrito
+            </a>
+
+            <a href="/logout"
+               class="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold">
+                Cerrar sesión
+            </a>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- ENCABEZADO -->
+    <section class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 mb-8">
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+
+            <div class="lg:col-span-2">
+                <p class="text-sm uppercase tracking-[0.25em] text-blue-700 font-bold">
+                    Historial del cliente
+                </p>
+
+                <h1 class="title-font text-4xl md:text-5xl font-bold mt-3">
+                    Mis pedidos
+                </h1>
+
+                <p class="text-slate-500 mt-5 text-lg">
+                    Aquí puede consultar los pedidos realizados con su cuenta.
+                </p>
+
+                <p class="text-slate-500 mt-2">
+                    Usuario:
+                    <strong class="text-slate-900" th:text="${usuario.nombre}">
+                        Cliente
+                    </strong>
+                    |
+                    Correo:
+                    <strong class="text-slate-900" th:text="${usuario.correo}">
+                        correo@ejemplo.com
+                    </strong>
+                </p>
+            </div>
+
+            <div class="bg-blue-50 rounded-3xl p-6">
+                <p class="text-sm text-blue-700 font-bold">Pedidos encontrados</p>
+
+                <p class="title-font text-5xl font-bold mt-2" th:text="${#lists.size(pedidos)}">
+                    0
+                </p>
+
+                <p class="text-slate-500 mt-2">
+                    Pedido(s) asociados a su correo.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIN PEDIDOS -->
+    <section th:if="${#lists.isEmpty(pedidos)}"
+             class="bg-white rounded-3xl shadow-sm border border-slate-200 p-10 text-center">
+
+        <div class="w-24 h-24 mx-auto rounded-3xl bg-slate-100 flex items-center justify-center text-4xl font-bold text-slate-400">
+            C
+        </div>
+
+        <h2 class="title-font text-3xl font-bold mt-6">
+            Todavía no tiene pedidos registrados
+        </h2>
+
+        <p class="text-slate-500 mt-3">
+            Cuando confirme una compra, el pedido aparecerá en esta sección.
+        </p>
+
+        <a href="/seleccion-vehiculo"
+           class="inline-block mt-6 bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold">
+            Buscar accesorios
+        </a>
+    </section>
+
+    <!-- LISTA DE PEDIDOS -->
+    <section th:if="${!#lists.isEmpty(pedidos)}"
+             class="space-y-6">
+
+        <article th:each="pedido : ${pedidos}"
+                 class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+
+            <!-- CABECERA DEL PEDIDO -->
+            <div class="p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+                <div>
+                    <p class="text-sm uppercase tracking-[0.25em] text-blue-700 font-bold">
+                        Pedido
+                    </p>
+
+                    <h2 class="title-font text-3xl font-bold mt-1">
+                        #<span th:text="${pedido.id}">1</span>
+                    </h2>
+
+                    <p class="text-slate-500 mt-2">
+                        Fecha:
+                        <strong th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm') : 'Sin fecha'}">
+                            27/06/2026 15:20
+                        </strong>
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+
+                    <span class="inline-block px-4 py-2 rounded-full text-sm font-bold text-center"
+                          th:classappend="${pedido.estado == 'PENDIENTE'} ? ' bg-yellow-100 text-yellow-700' :
+                                          (${pedido.estado == 'CONFIRMADO'} ? ' bg-blue-100 text-blue-700' :
+                                          (${pedido.estado == 'ENTREGADO'} ? ' bg-green-100 text-green-700' :
+                                          ' bg-red-100 text-red-700'))"
+                          th:text="${pedido.estado}">
+                        PENDIENTE
+                    </span>
+
+                    <div class="bg-blue-50 text-blue-700 px-5 py-3 rounded-2xl font-bold text-center">
+                        Total:
+                        ₡<span th:text="${pedido.total != null ? #numbers.formatDecimal(pedido.total, 0, 'COMMA', 0, 'POINT') : '0'}">
+                            0
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATOS DEL CLIENTE -->
+            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-200">
+
+                <div class="bg-slate-100 rounded-2xl p-4">
+                    <p class="text-xs text-slate-500 font-bold">Cliente</p>
+                    <p class="font-bold mt-1" th:text="${pedido.nombreCliente}">
+                        Cliente
+                    </p>
+                </div>
+
+                <div class="bg-slate-100 rounded-2xl p-4">
+                    <p class="text-xs text-slate-500 font-bold">Correo</p>
+                    <p class="font-bold mt-1" th:text="${pedido.correoCliente}">
+                        correo@ejemplo.com
+                    </p>
+                </div>
+
+                <div class="bg-slate-100 rounded-2xl p-4">
+                    <p class="text-xs text-slate-500 font-bold">Teléfono</p>
+                    <p class="font-bold mt-1" th:text="${pedido.telefonoCliente}">
+                        8888-8888
+                    </p>
+                </div>
+            </div>
+
+            <!-- PRODUCTOS -->
+            <div class="p-6">
+
+                <h3 class="title-font text-2xl font-bold">
+                    Productos del pedido
+                </h3>
+
+                <div class="mt-5 overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                        <tr class="bg-slate-50 text-left text-sm text-slate-600">
+                            <th class="p-4">Producto</th>
+                            <th class="p-4">Categoría</th>
+                            <th class="p-4">Cantidad</th>
+                            <th class="p-4">Precio unitario</th>
+                            <th class="p-4">Subtotal</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="detalle : ${detallesPorPedido[pedido.id]}"
+                            class="border-t border-slate-200">
+
+                            <td class="p-4">
+                                <div class="flex items-center gap-4">
+
+                                    <div class="w-16 h-16 bg-slate-100 rounded-2xl overflow-hidden shrink-0">
+
+                                        <img th:if="${detalle.accesorio.imagenUrl != null && !detalle.accesorio.imagenUrl.isEmpty()}"
+                                             th:src="${detalle.accesorio.imagenUrl}"
+                                             class="w-full h-full object-cover"
+                                             alt="Imagen del producto">
+
+                                        <div th:if="${detalle.accesorio.imagenUrl == null || detalle.accesorio.imagenUrl.isEmpty()}"
+                                             class="w-full h-full flex items-center justify-center bg-slate-200">
+                                            <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
+                                                C
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p class="font-bold" th:text="${detalle.accesorio.nombre}">
+                                            Producto
+                                        </p>
+
+                                        <p class="text-xs text-slate-500">
+                                            ID:
+                                            <span th:text="${detalle.accesorio.id}">1</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="p-4 text-slate-600"
+                                th:text="${detalle.accesorio.categoria}">
+                                Categoría
+                            </td>
+
+                            <td class="p-4 font-bold"
+                                th:text="${detalle.cantidad}">
+                                1
+                            </td>
+
+                            <td class="p-4">
+                                ₡<span th:text="${detalle.precioUnitario != null ? #numbers.formatDecimal(detalle.precioUnitario, 0, 'COMMA', 0, 'POINT') : '0'}">
+                                    0
+                                </span>
+                            </td>
+
+                            <td class="p-4 font-bold text-blue-700">
+                                ₡<span th:text="${detalle.subtotal != null ? #numbers.formatDecimal(detalle.subtotal, 0, 'COMMA', 0, 'POINT') : '0'}">
+                                    0
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <a th:href="@{/pedidos/factura/{id}(id=${pedido.id})}"
+                       class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold">
+                        Ver factura
+                    </a>
+                </div>
+            </div>
+        </article>
+    </section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura | CustomDrive CR</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 min-h-screen text-slate-900">
+
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+
+            <a href="/" class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-blue-700 text-white rounded-2xl flex items-center justify-center font-bold text-2xl">
+                    C
+                </div>
+
+                <div>
+                    <h1 class="title-font text-2xl font-bold">CustomDrive CR</h1>
+                    <p class="text-xs uppercase tracking-[0.25em] text-blue-700">
+                        Invoice
+                    </p>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="/seleccion-vehiculo"
+                    class="px-5 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold">
+                    Nueva compra
+                </a>
+
+                <a href="/mis-pedidos"
+                    class="px-5 py-3 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-semibold">
+                    Mis pedidos
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-10">
+
+        <section th:if="${pedido == null}"
+            class="bg-white rounded-3xl shadow-sm border border-slate-200 p-10 text-center">
+
+            <h1 class="title-font text-3xl font-bold">
+                Pedido no encontrado
+            </h1>
+
+            <p class="text-slate-500 mt-3">
+                No se pudo cargar la información del pedido.
+            </p>
+
+            <a href="/seleccion-vehiculo"
+                class="inline-block mt-6 bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold">
+                Volver al catálogo
+            </a>
+        </section>
+
+        <section th:if="${pedido != null}"
+            class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+
+            <div class="bg-blue-700 text-white p-8">
+                <p class="text-sm uppercase tracking-[0.25em] text-blue-100 font-bold">
+                    Pedido confirmado
+                </p>
+
+                <h1 class="title-font text-4xl md:text-5xl font-bold mt-3">
+                    Factura de compra
+                </h1>
+
+                <p class="text-blue-100 mt-4">
+                    Gracias por comprar en CustomDrive CR.
+                </p>
+            </div>
+
+            <div class="p-8">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <div class="bg-slate-100 rounded-3xl p-6">
+                        <h2 class="title-font text-2xl font-bold">
+                            Datos del pedido
+                        </h2>
+
+                        <div class="mt-4 space-y-2 text-slate-600">
+                            <p>
+                                <strong>ID:</strong>
+                                <span th:text="${pedido.id}">1</span>
+                            </p>
+
+                            <p>
+                                <strong>Fecha:</strong>
+                                <span
+                                    th:text="${pedido.fechaPedido != null ? #temporals.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm') : 'Sin fecha'}">
+                                    27/06/2026 15:20
+                                </span>
+                            </p>
+
+                            <p>
+                                <strong>Estado:</strong>
+                                <span th:text="${pedido.estado}">PENDIENTE</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-100 rounded-3xl p-6">
+                        <h2 class="title-font text-2xl font-bold">
+                            Cliente
+                        </h2>
+
+                        <div class="mt-4 space-y-2 text-slate-600">
+                            <p>
+                                <strong>Nombre:</strong>
+                                <span th:text="${pedido.nombreCliente}">Cliente</span>
+                            </p>
+
+                            <p>
+                                <strong>Correo:</strong>
+                                <span th:text="${pedido.correoCliente}">correo@ejemplo.com</span>
+                            </p>
+
+                            <p>
+                                <strong>Teléfono:</strong>
+                                <span th:text="${pedido.telefonoCliente}">8888-8888</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h2 class="title-font text-3xl font-bold">
+                        Productos
+                    </h2>
+
+                    <div class="mt-5 overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-left text-sm text-slate-600">
+                                    <th class="p-4">Producto</th>
+                                    <th class="p-4">Cantidad</th>
+                                    <th class="p-4">Precio unitario</th>
+                                    <th class="p-4">Subtotal</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="detalle : ${detalles}" class="border-t border-slate-200">
+                                    <td class="p-4 font-bold" th:text="${detalle.accesorio.nombre}">
+                                        Producto
+                                    </td>
+
+                                    <td class="p-4" th:text="${detalle.cantidad}">
+                                        1
+                                    </td>
+
+                                    <td class="p-4">
+                                        ₡<span
+                                            th:text="${detalle.precioUnitario != null ? #numbers.formatDecimal(detalle.precioUnitario, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+                                    </td>
+
+                                    <td class="p-4 font-bold">
+                                        ₡<span
+                                            th:text="${detalle.subtotal != null ? #numbers.formatDecimal(detalle.subtotal, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-8 bg-blue-50 rounded-3xl p-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                    <div>
+                        <p class="text-sm text-blue-700 font-bold">
+                            Total del pedido
+                        </p>
+
+                        <p class="title-font text-5xl font-bold text-blue-700 mt-2">
+                            ₡<span
+                                th:text="${pedido.total != null ? #numbers.formatDecimal(pedido.total, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+                        </p>
+                    </div>
+
+                    <a href="/seleccion-vehiculo"
+                        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-4 rounded-2xl font-bold text-center">
+                        Hacer otra compra
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

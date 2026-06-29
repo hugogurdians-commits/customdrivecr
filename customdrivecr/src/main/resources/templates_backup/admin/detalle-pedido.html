@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Pedido | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-5xl mx-auto px-6 py-8">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Detalle del Pedido #<span th:text="${pedido.id}">1</span></h1>
+                <p class="text-gray-600">Información completa del pedido seleccionado.</p>
+            </div>
+
+            <a href="/admin/pedidos" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Volver a pedidos
+            </a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6 mb-6">
+
+            <h2 class="text-xl font-bold mb-4">Datos del cliente</h2>
+
+            <p><strong>Nombre:</strong> <span th:text="${pedido.nombreCliente}">Cliente</span></p>
+            <p><strong>Correo:</strong> <span th:text="${pedido.correoCliente}">correo</span></p>
+            <p><strong>Teléfono:</strong> <span th:text="${pedido.telefonoCliente}">teléfono</span></p>
+            <p><strong>Fecha:</strong> <span th:text="${pedido.fechaPedido}">fecha</span></p>
+            <p><strong>Estado:</strong> <span th:text="${pedido.estado}">estado</span></p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <h2 class="text-xl font-bold mb-4">Productos del pedido</h2>
+
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200 text-left">
+                        <th class="p-3">Producto</th>
+                        <th class="p-3">Cantidad</th>
+                        <th class="p-3">Precio</th>
+                        <th class="p-3">Subtotal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="detalle : ${detalles}" class="border-b">
+                        <td class="p-3" th:text="${detalle.accesorio.nombre}">Producto</td>
+                        <td class="p-3" th:text="${detalle.cantidad}">1</td>
+                        <td class="p-3">₡<span th:text="${detalle.precioUnitario}">0</span></td>
+                        <td class="p-3 font-bold">₡<span th:text="${detalle.subtotal}">0</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-right mt-6 text-2xl font-bold">
+                Total: ₡<span th:text="${pedido.total}">0</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

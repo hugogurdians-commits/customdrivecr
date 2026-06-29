@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Vehículos | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Gestión de Vehículos</h1>
+                <p class="text-gray-600">Registro, edición y eliminación de vehículos específicos por modelo y año.</p>
+            </div>
+
+            <a href="/admin/dashboard" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Volver al dashboard
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Formulario -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-1">
+
+                <h2 class="text-xl font-bold mb-4" th:text="${vehiculo.id == null ? 'Nuevo vehículo' : 'Editar vehículo'}">
+                    Nuevo vehículo
+                </h2>
+
+                <form th:action="@{/admin/vehiculos/guardar}" th:object="${vehiculo}" method="post" class="space-y-4">
+
+                    <input type="hidden" th:field="*{id}">
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Modelo</label>
+                        <select th:field="*{modelo}" required class="w-full border rounded px-3 py-2">
+                            <option value="">Seleccione un modelo</option>
+                            <option th:each="modeloItem : ${modelos}"
+                                    th:value="${modeloItem.id}"
+                                    th:text="${modeloItem.marca.nombre + ' - ' + modeloItem.nombre}">
+                                Toyota - Corolla
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Año</label>
+                        <input type="number" th:field="*{anio}" required
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="Ej: 2024">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Versión</label>
+                        <input type="text" th:field="*{version}"
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="Ej: Sport, Limited, Coupé">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Descripción</label>
+                        <textarea th:field="*{descripcion}"
+                                  class="w-full border rounded px-3 py-2"
+                                  rows="3"
+                                  placeholder="Descripción del vehículo"></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" th:field="*{activo}">
+                        <label class="text-sm">Activo</label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded">
+                        Guardar vehículo
+                    </button>
+
+                    <a href="/admin/vehiculos" class="block text-center text-sm text-gray-600 hover:text-blue-700">
+                        Limpiar formulario
+                    </a>
+                </form>
+            </div>
+
+            <!-- Tabla -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+
+                <h2 class="text-xl font-bold mb-4">Lista de vehículos</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="p-3">ID</th>
+                                <th class="p-3">Marca</th>
+                                <th class="p-3">Modelo</th>
+                                <th class="p-3">Año</th>
+                                <th class="p-3">Versión</th>
+                                <th class="p-3">Activo</th>
+                                <th class="p-3">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="item : ${vehiculos}" class="border-b hover:bg-gray-50">
+                                <td class="p-3" th:text="${item.id}">1</td>
+                                <td class="p-3" th:text="${item.modelo.marca.nombre}">Toyota</td>
+                                <td class="p-3" th:text="${item.modelo.nombre}">Corolla</td>
+                                <td class="p-3" th:text="${item.anio}">2024</td>
+                                <td class="p-3" th:text="${item.version}">Sport</td>
+                                <td class="p-3">
+                                    <span th:if="${item.activo}" class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                                        Sí
+                                    </span>
+                                    <span th:if="${!item.activo}" class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
+                                        No
+                                    </span>
+                                </td>
+                                <td class="p-3 flex gap-2">
+                                    <a th:href="@{/admin/vehiculos/editar/{id}(id=${item.id})}"
+                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                                        Editar
+                                    </a>
+
+                                    <a th:href="@{/admin/vehiculos/eliminar/{id}(id=${item.id})}"
+                                       onclick="return confirm('¿Seguro que desea eliminar este vehículo?')"
+                                       class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(vehiculos)}">
+                                <td colspan="7" class="p-6 text-center text-gray-500">
+                                    No hay vehículos registrados todavía.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

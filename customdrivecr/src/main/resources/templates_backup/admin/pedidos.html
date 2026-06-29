@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Pedidos | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Gestión de Pedidos</h1>
+                <p class="text-gray-600">Pedidos generados por los clientes.</p>
+            </div>
+
+            <a href="/admin/dashboard" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Volver al dashboard
+            </a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200 text-left">
+                        <th class="p-3">ID</th>
+                        <th class="p-3">Cliente</th>
+                        <th class="p-3">Correo</th>
+                        <th class="p-3">Fecha</th>
+                        <th class="p-3">Total</th>
+                        <th class="p-3">Estado</th>
+                        <th class="p-3">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="pedido : ${pedidos}" class="border-b hover:bg-gray-50">
+                        <td class="p-3" th:text="${pedido.id}">1</td>
+                        <td class="p-3" th:text="${pedido.nombreCliente}">Cliente</td>
+                        <td class="p-3" th:text="${pedido.correoCliente}">correo</td>
+                        <td class="p-3" th:text="${pedido.fechaPedido}">fecha</td>
+                        <td class="p-3 font-bold">₡<span th:text="${pedido.total}">0</span></td>
+
+                        <td class="p-3">
+                            <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700"
+                                  th:text="${pedido.estado}">
+                                PENDIENTE
+                            </span>
+                        </td>
+
+                        <td class="p-3">
+                            <div class="flex flex-wrap gap-2">
+                                <a th:href="@{/admin/pedidos/detalle/{id}(id=${pedido.id})}"
+                                   class="bg-blue-700 hover:bg-blue-800 text-white px-3 py-1 rounded text-sm">
+                                    Ver
+                                </a>
+
+                                <a th:href="@{/admin/pedidos/estado/{id}(id=${pedido.id}, estado='CONFIRMADO')}"
+                                   class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                                    Confirmar
+                                </a>
+
+                                <a th:href="@{/admin/pedidos/estado/{id}(id=${pedido.id}, estado='ENTREGADO')}"
+                                   class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-1 rounded text-sm">
+                                    Entregado
+                                </a>
+
+                                <a th:href="@{/admin/pedidos/estado/{id}(id=${pedido.id}, estado='CANCELADO')}"
+                                   class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(pedidos)}">
+                        <td colspan="7" class="p-6 text-center text-gray-500">
+                            No hay pedidos registrados todavía.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Marcas | CustomDrive CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Gestión de Marcas</h1>
+                <p class="text-gray-600">Registro, edición y eliminación de marcas de vehículos.</p>
+            </div>
+
+            <a href="/admin/dashboard" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Volver al dashboard
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Formulario -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-1">
+
+                <h2 class="text-xl font-bold mb-4" th:text="${marca.id == null ? 'Nueva marca' : 'Editar marca'}">
+                    Nueva marca
+                </h2>
+
+                <form th:action="@{/admin/marcas/guardar}" th:object="${marca}" method="post" class="space-y-4">
+
+                    <input type="hidden" th:field="*{id}">
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Nombre</label>
+                        <input type="text" th:field="*{nombre}" required
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="Ej: Toyota">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Descripción</label>
+                        <textarea th:field="*{descripcion}"
+                                  class="w-full border rounded px-3 py-2"
+                                  rows="3"
+                                  placeholder="Descripción de la marca"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">País de origen</label>
+                        <input type="text" th:field="*{paisOrigen}"
+                               class="w-full border rounded px-3 py-2"
+                               placeholder="Ej: Japón">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" th:field="*{activo}">
+                        <label class="text-sm">Activo</label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded">
+                        Guardar marca
+                    </button>
+
+                    <a href="/admin/marcas" class="block text-center text-sm text-gray-600 hover:text-blue-700">
+                        Limpiar formulario
+                    </a>
+                </form>
+            </div>
+
+            <!-- Tabla -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+
+                <h2 class="text-xl font-bold mb-4">Lista de marcas</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="p-3">ID</th>
+                                <th class="p-3">Nombre</th>
+                                <th class="p-3">País</th>
+                                <th class="p-3">Activo</th>
+                                <th class="p-3">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="item : ${marcas}" class="border-b hover:bg-gray-50">
+                                <td class="p-3" th:text="${item.id}">1</td>
+                                <td class="p-3" th:text="${item.nombre}">Toyota</td>
+                                <td class="p-3" th:text="${item.paisOrigen}">Japón</td>
+                                <td class="p-3">
+                                    <span th:if="${item.activo}" class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                                        Sí
+                                    </span>
+                                    <span th:if="${!item.activo}" class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
+                                        No
+                                    </span>
+                                </td>
+                                <td class="p-3 flex gap-2">
+                                    <a th:href="@{/admin/marcas/editar/{id}(id=${item.id})}"
+                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                                        Editar
+                                    </a>
+
+                                    <a th:href="@{/admin/marcas/eliminar/{id}(id=${item.id})}"
+                                       onclick="return confirm('¿Seguro que desea eliminar esta marca?')"
+                                       class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(marcas)}">
+                                <td colspan="5" class="p-6 text-center text-gray-500">
+                                    No hay marcas registradas todavía.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
